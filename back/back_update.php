@@ -12,22 +12,20 @@ $sql2 = "select *
 $re2 = $link->prepare($sql2);
 $re2->execute();
 $row2 = $re2->fetch();
+// echo $row2['myarea'];
 //}
-echo $row2['smcid']."<br>";
 $sql3 = "select * from sys_map_city where status = 1";
 $re3 = $link->prepare($sql3);
 $re3->execute();
 $row3 = $re3->fetch();
 
-$sql4 ="select * from sys_map_area where smaid = '".$row2['smcid']."'";
+$sql4 ="select * from sys_map_area";
 $re4 = $link->prepare($sql4);
 $re4->execute();
 $row4 = $re4->fetch();
-
-do{
-echo $row4['area']."<br>";
-}while($row4=$re4->fetch());
-
+// echo '<pre>';
+// print_r($row4);
+// echo '</pre>';
 if(!empty($_POST['mm_update'])){
 $update = $_POST['update'];
 
@@ -91,18 +89,19 @@ header("Location:back_admin.php?");
         <td><input name="mypostal" id="mypostal" type="text" value="<?php echo $row2['mypostal'];?>" readonly></td>
         <td>
           <select class="" name="mycity" id="mycity">
-            <option value=""><?php echo $row2['city'];?></option>
             <?php do{;?>
-            <option value="<?php echo $row3['smcid'];?>"><?php echo $row3['city'];?></option>
+            <?php $chk=$row2['mycity']==$row3['smcid']?'selected':'';?>
+            <option value="<?php echo $row3['smcid'];?>"<?php echo $chk;?>><?php echo $row3['city'];?></option>
           <?php }while($row3 = $re3->fetch());?>
           </select>
         </td>
         <td>
           <select class="" name="myarea" id="myarea">
             <option value="<?php echo $row2['myarea'];?>"><?php echo $row2['area'];?></option>
-            <?php do{;?>
-            <option value="<?php echo $row4['smaid'];?>"><?php echo $row4['area'];?></option>
-          <?php }while($row4 = $re4->fetchall());?>
+            <!-- <?php //do{;?> -->
+            <!-- <?php //echo $chk=$row2['myarea']==$row4['smaid']?'selected':'';?> -->
+            <!-- <option value="<?php //echo $row4['smaid'];?>"<?php //echo $chk;?>><?php //echo $row4['area'];?></option> -->
+          <!-- <?php //}//while($row4 = $re4->fetchall());?> -->
           </select>
         </td>
         <td><input name="address" id="address" type="text" value="<?php echo $row2['address'];?>"></td>
