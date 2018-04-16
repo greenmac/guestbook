@@ -6,26 +6,29 @@
 //$sql2 = "select * from guest where g_seq='$up'";
 $sql2 = "select *
          from guest as g1
-         inner join sys_map_city as s1 on g1.mycity = s1.smcid
-         inner join sys_map_area as s2 on g1.myarea = s2.smaid
+         inner join sys_map_city as s1
+         on g1.mycity = s1.smcid
+         inner join sys_map_area as s2
+         on g1.myarea = s2.smaid
          where g_seq='".$_GET['up']."'";
 $re2 = $link->prepare($sql2);
 $re2->execute();
 $row2 = $re2->fetch();
-// echo $row2['myarea'];
+$smcid=$row2['smcid'];
+// pre($smcid);
 //}
-$sql3 = "select * from sys_map_city where status = 1";
+$sql3 = "select * from sys_map_city where smsid = 1";
 $re3 = $link->prepare($sql3);
 $re3->execute();
 $row3 = $re3->fetch();
+// pre($row3);
 
-$sql4 ="select * from sys_map_area";
+$sql4 ="select * from sys_map_area where smcid=$smcid";
 $re4 = $link->prepare($sql4);
 $re4->execute();
-$row4 = $re4->fetch();
-// echo '<pre>';
-// print_r($row4);
-// echo '</pre>';
+$row4 = $re4->fetchall();
+// pre($row4);
+
 if(!empty($_POST['mm_update'])){
 $update = $_POST['update'];
 
@@ -97,11 +100,13 @@ header("Location:back_admin.php?");
         </td>
         <td>
           <select class="" name="myarea" id="myarea">
-            <option value="<?php echo $row2['myarea'];?>"><?php echo $row2['area'];?></option>
-            <!-- <?php //do{;?> -->
-            <!-- <?php //echo $chk=$row2['myarea']==$row4['smaid']?'selected':'';?> -->
-            <!-- <option value="<?php //echo $row4['smaid'];?>"<?php //echo $chk;?>><?php //echo $row4['area'];?></option> -->
-          <!-- <?php //}//while($row4 = $re4->fetchall());?> -->
+            <?php
+              foreach($row4 as $row4)
+              {
+                $chk=$row2['myarea']==$row4['smaid']?'selected':'';
+                echo '<option value="'.$row4['smaid'].'"'.$chk.'>'.$row4['area'].'</option>';
+              }
+            ?>
           </select>
         </td>
         <td><input name="address" id="address" type="text" value="<?php echo $row2['address'];?>"></td>
