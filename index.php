@@ -36,7 +36,7 @@ if((!empty($_POST['g_name'])) && (!empty($_POST['g_ra'])) && (!empty($_POST['g_m
 
   </head>
   <body>
-    <form name="postform" id="postform" method="post" action="guest_login.php" autocomplete="off" >
+    <form name="postform" id="postform" method="post" action="index.php" autocomplete="off" >
     <table border="1" align="center" cellspacing="0">
       <tr align="center">
          <td>暱稱</td>
