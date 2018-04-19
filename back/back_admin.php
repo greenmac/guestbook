@@ -10,24 +10,20 @@ $sql1 = "select g_seq ,g_name ,g_gender ,g_mobile ,g_email ,g_con ,mypostal ,cit
 
 $re1 = $link->prepare($sql1);
 $re1 -> execute();
-$row1 = $re1->fetch();
+$row1 = $re1->fetchall();
+
 $nums = $re1->rowcount();
-
-$per = 5;
-$pages = ceil($nums/$per);
-if(!isset($_GET['page']))
-  {
-    $page = 1;
-  }
-  else
-  {
-    $page = (int)$_GET['page'];
-  }
-$start = ($page-1)*$per;
-
-$sql1.=" LIMIT $start,$per ";
+$per = 5;//每頁呈現幾筆
+$pages = ceil($nums/$per);//(總筆數/每頁呈現幾筆),會出現幾頁
+$page=empty($_GET['page'])?1:(int)$_GET['page'];//取get值
+$pagestart = ($page-1)*$per;//每頁從陣列['0']開始顯示
+$range=10;//每頁顯示的頁碼數
+$start = (int)(($page-1) / $range) * $range + 1;  //$start是設定顯示每頁頁碼的開始值
+$end = $start + $range -1;  //$end是設定顯示每頁頁碼的結束值
+$sql1.= " LIMIT $pagestart,$per";//陣列['0']開始顯示,呈現幾筆
 $re1 = $link->prepare($sql1);
 $re1->execute();
+$row1 = $re1->fetchall();
 ?>
 <!DOCTYPE html>
 <html>
@@ -64,16 +60,15 @@ $re1->execute();
         <td>地址</td>
         <td colspan="2">操作</td>
       </tr>
-    <?php while($row1 = $re1->fetch()){;?>
+      <?php
+      foreach($row1 as $row1)
+      {
+      ?>
       <tr align="center">
         <td><a class="group1" href="back_colorbox.php?name=<?php echo $row1['g_seq'];?>"><?php echo $row1['g_name'];?></td>
-        <td><?php
+        <td>
+        <?php
         echo $row1['g_gender']==1?"男":"女";
-        // if($row1['g_gender']==1){
-        //   echo $row1['g_gender']="男";
-        // }elseif($row1['g_gender']==2){
-        //   echo $row1['g_gender']="女";
-        // }
         ;?></td>
         <td><?php echo $row1['g_mobile'];?></td>
         <td><?php echo $row1['g_email'];?></td>
@@ -85,23 +80,69 @@ $re1->execute();
         <td><a href="back_update.php?up=<?php echo $row1['g_seq'];?>"><input type="button" name="update" id="update" value="編輯"></a></td>
         <td><a href="back_delete.php?del=<?php echo $row1['g_seq'];?>"><input type="button" name="del" id="del" value="刪除"></a></td>
       </tr>
-    <?php };?>
+    <?php
+    };
+    ?>
     </table>
     <p align="center">
     <?php
-    echo "共".$nums."筆-在第".$page."頁-共".$pages."頁"."<br>";
-    echo "<a href=?page=1>首頁</a>";
-    echo "第";
-    for ($i=1;$i<=$pages;$i++)
-    {
-        if($i==$page)
-        {
-          echo '<font size=10>'.$i.'</font>'."　";
-        }else{
-          echo '<a href="?page='.$i.'">'.$i.'</a>'."　";
-        }
+    // echo "共".$nums."筆-在第".$page."頁-共".$pages."頁"."<br>";
+    // echo "<a href=?page=1>首頁</a>";
+    // echo "第";
+    // for ($i=1;$i<=$pages;$i++)
+    // {
+    //     if($i==$page)
+    //     {
+    //       echo '<font size=10>'.$i.'</font>'."　";
+    //     }else{
+    //       echo '<a href="?page='.$i.'">'.$i.'</a>'."　";
+    //     }
+    // }
+    // echo " 頁 <a href=?page=".$pages.">末頁</a><br /><br />";
+
+    echo $page==1?'':'<a href=?page=1>首頁</i></a>'.'　';
+    echo $page==1?'':'<a href=?page='.($page-1).'>上一頁</a>'.'　';//上一頁
+    if($pages <= $range)
+    { //開始輸出頁碼
+      for($i=1;$i<=$pages;$i++)
+      {
+        echo $i==$page ? '<a>'.$i.'</a>'.'　':'<a href="?&page='.$i.'">'.$i.'</a>'.'　';//當前顯示頁不會有連結,且放大
+      }
     }
-    echo " 頁 <a href=?page=".$pages.">末頁</a><br /><br />";
+    else
+    { //如果總頁數大於每頁要顯示的頁碼數
+      //如果目前的頁數大於5，預設定為第6頁開始，每頁的頁碼就往前移動1位  ex 目前的頁數為第6頁，所以輸出 2 3 4 5 6 7 8 9 10 11，如果是第7頁就輸出 3 4 5 6 7 8 9 10 11 12，依此類推
+      if($page > 5)
+      {
+        $end = $page+5;  //每頁結尾的頁碼就+5
+        if ($end > $pages)
+        {  //如果每頁結尾的頁碼大於總頁數
+          $end = $pages;  //就將每頁結尾的頁碼改寫為最後一頁
+        }
+        $start = $end-9;  //將每頁開頭的頁碼設為結尾的頁碼-9
+        //開始輸出頁碼
+        for($i=$start; $i<=$end; $i++)
+        { //在目前頁數裡本身頁數的頁碼就不要連結，如果不是就加上連結
+          echo $i==$page ? '<a>'.$i.'</a>'.'　':'<a href="?page='.$i.'">'.$i.'</a>'.'　';//當前顯示頁不會有連結,且放大
+        }
+      }
+      else
+      { //如果目前的頁數小於5
+        if ($end > $pages)
+        { //如果每頁結尾的頁碼大於總頁數
+          $end = $pages;  //就將每頁結尾的頁碼改寫為最後一頁
+        }
+        //開始輸出頁碼
+        for($i=$start; $i<=$end; $i++)
+        { //在目前頁數裡本身頁數的頁碼就不要連結，如果不是就加上連結
+          echo $i==$page ? '<a>'.$i.'</a>'.'　':'<a href="page='.$i.'">'.$i.'</a>'.'　';//當前顯示頁不會有連結,且放大
+        }
+      }
+    }
+    echo $page==$pages?'':'　'.'<a href=?page='.($page+1).'>下一頁</a>';//下一頁
+    echo $page==$pages?'':'　'.'<a href=?page='.$pages.'>末頁</i></a>';
+    echo '<a>共'.$pages.'頁</a>';  //顯示目前總頁數
+    echo '<a>共'.$nums.'筆</a>'; //顯示總筆數
     ?>
    </p>
    <script>
