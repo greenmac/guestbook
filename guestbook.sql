@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機: 127.0.0.1:3306
--- 產生時間： 2018-04-19 07:12:13
+-- 產生時間： 2018-05-09 09:13:36
 -- 伺服器版本: 5.7.19
 -- PHP 版本： 5.6.31
 
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `guest` (
   `myarea` int(10) NOT NULL,
   `address` varchar(300) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`g_seq`)
-) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- 資料表的匯出資料 `guest`
@@ -94,7 +94,8 @@ INSERT INTO `guest` (`g_seq`, `g_name`, `g_gender`, `g_mobile`, `g_email`, `g_co
 (67, 'qq', 2, '7788994455', 'ef@rg', '你好', 104, 1, 3, '一段'),
 (68, 'ff', 1, '1234567890', 'gr@d.f', 'jj林俊傑', 103, 1, 2, 'fe'),
 (69, 'GD', 1, '0911223344', 'dw@dwf', '乙姬公主', 208, 3, 21, '龍洞'),
-(70, 'rt', 1, '0936957847', 'rt@rt.rt', '2018/04/19', 302, 7, 68, '二段');
+(70, 'rt', 1, '0936957847', 'rt@rt.rt', '2018/04/19', 302, 7, 68, '二段'),
+(71, 'giu', 1, '0944554646', 'd@dd', 'drjtjhrt', 200, 2, 13, 'rhyer');
 
 -- --------------------------------------------------------
 
